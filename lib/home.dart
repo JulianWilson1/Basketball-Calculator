@@ -36,6 +36,7 @@ class TodoListState extends State<TodoList> {
   List<String> _todoItems2 = [];
   List<String> _todoItems3 = [];
   List<String> _todoItems4 = [];
+  List<String> _todoItems5 = [];
 
 
 
@@ -67,6 +68,15 @@ class TodoListState extends State<TodoList> {
   }
    
    void _addTodoItem4(String task) {
+    // Only add the task if the user actually entered something
+    if(task.length > 0) {
+      // Putting our code inside "setState" tells the app that our state has changed, and
+      // it will automatically re-render the list
+      setState(() => _todoItems4.add(task));
+    }
+  }
+
+     void _addTodoItem5(String task) {
     // Only add the task if the user actually entered something
     if(task.length > 0) {
       // Putting our code inside "setState" tells the app that our state has changed, and
@@ -257,7 +267,8 @@ class TodoListState extends State<TodoList> {
       )
     );
   }
-    void _pushAddTodoScreen3() {
+
+   void _pushAddTodoScreen3() {
     // Push this page onto the stack
     Navigator.of(context).push(
       // MaterialPageRoute will automatically animate the screen entry, as well as adding
@@ -293,14 +304,12 @@ class TodoListState extends State<TodoList> {
                         autofocus: true,
                         onSubmitted: (val) {
                           _addTodoItem(val);
-                          _pushAddTodoScreen4(); // Close the add todo screen
+                          _pushAddTodoScreen4();// Close the add todo screen
                         },
                         decoration: new InputDecoration(
-                          hintText: 'Enter your shots...'
+                          hintText: 'Enter how many points you scored...',
                         ),
                       ),
-                      // The second text field is focused on when a user taps the
-                      // FloatingActionButton.
                     ],
                   ),
                 ),
@@ -338,10 +347,63 @@ class TodoListState extends State<TodoList> {
                 padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
+                    //   The first text field is focused on as soon as the app starts.
+                      // The second text field is focused on when a user taps the
+                      // FloatingActionButton.
                       TextField(
                         autofocus: true,
                         onSubmitted: (val) {
                           _addTodoItem(val);
+                          _pushAddTodoScreen5(); // Close the add todo screen
+                        },
+                        decoration: new InputDecoration(
+                          hintText: 'Enter your shots...'
+                        ),
+                      ),
+                      // The second text field is focused on when a user taps the
+                      // FloatingActionButton.
+                    ],
+                  ),
+                ),
+          );
+        }
+      )
+    );
+  }
+    void _pushAddTodoScreen5() {
+    // Push this page onto the stack
+    Navigator.of(context).push(
+      // MaterialPageRoute will automatically animate the screen entry, as well as adding
+      // a back button to close it
+      new MaterialPageRoute(
+        builder: (context) {
+          return new Scaffold(
+            backgroundColor: Colors.blue[300],
+            appBar: AppBar(
+              backgroundColor: Colors.blue[300],
+              title: Text('Add Stats'),
+              actions: <Widget>[
+                new RaisedButton(
+                child: Text('Calculator'),
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => prefix0.MyApp())
+                  );
+                },
+              )
+              ]
+            ),
+             body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        autofocus: true,
+                        onSubmitted: (val) {
+                          _addTodoItem(val);
+                          Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pop(context);
