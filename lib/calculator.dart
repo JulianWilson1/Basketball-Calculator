@@ -1,6 +1,7 @@
 import 'package:basketball_calculator/home.dart';
 import 'package:flutter/material.dart';
 
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -9,7 +10,7 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: new MyHomePage(title: 'Calculator'),
+      home: new MyHomePage(title: 'Calculate Your Average'),
     );
   }
 }
@@ -120,18 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.blue[300],
         appBar: new AppBar(
           backgroundColor: Colors.blue[300],
-          actions: <Widget>[
-            new RaisedButton(
-              child: Text('Home'),
-              color: Colors.white,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TodoApp())
-                );
-              },
-            )
-          ],
           title: new Text(widget.title),
         ),
         body: new Container(

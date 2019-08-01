@@ -1,192 +1,99 @@
-import 'package:basketball_calculator/main.dart' as prefix0;
+import 'package:basketball_calculator/home.dart';
+import 'package:basketball_calculator/login.dart' as prefix0;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'home.dart';
-
-void main() => runApp(new MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Simple Login Demo',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue
-      ),
-      home: new LoginPage(),
-    );
-  }
-}
+import 'package:provider/provider.dart';
+import 'auth.dart';
 
 class LoginPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => new _LoginPageState();
-}
-
-// Used for controlling whether the user is loggin or creating an account
-enum FormType {
-  login,
-  register
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-
- 
-  final TextEditingController _nameFilter = new TextEditingController();
-  final TextEditingController _emailFilter = new TextEditingController();
-  final TextEditingController _usernameFilter = new TextEditingController();
-  final TextEditingController _passwordFilter = new TextEditingController();
-  String _name = "";
-  String _email = "";
-  String _username = "";
-  String _password = "";
-  FormType _form = FormType.login; // our default setting is to login, and we should switch to creating an account when the user chooses to
-
-  _LoginPageState() {
-    _nameFilter.addListener(_nameListen);
-    _emailFilter.addListener(_emailListen);
-    _usernameFilter.addListener(_usernameListen);
-    _passwordFilter.addListener(_passwordListen);
-  }
-
-  void _nameListen() {
-    if (_nameFilter.text.isEmpty) {
-      _name = "";
-    } else {
-      _name = _nameFilter.text;
-    }
-  }
-
-  void _emailListen() {
-    if (_emailFilter.text.isEmpty) {
-      _email = "";
-    } else {
-      _email = _emailFilter.text;
-    }
-  }
-  void _usernameListen() {
-    if (_usernameFilter.text.isEmpty) {
-      _username = "";
-    } else {
-      _username = _usernameFilter.text;
-    }
-  }
-
-  void _passwordListen() {
-    if (_passwordFilter.text.isEmpty) {
-      _password = "";
-    } else {
-      _password = _passwordFilter.text;
-    }
-  }
+  final _formKey = GlobalKey<FormState>();
+  String _name;
+  String _password;
+  String _email;
+  String _username;
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: _buildBar(context),
-      body: new Container(
-        padding: EdgeInsets.all(16.0),
-        child: new Column(
-          children: <Widget>[
-            _buildTextFields(),
-            _buildButtons(),
-          ],
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue[300],
+          title: Text("Create Account"),
         ),
-      ),
-    );
-  }
+        body: Container(
+            padding: EdgeInsets.all(20.0),
+            child: Form(
+                key: _formKey,
+                child: Column(children: <Widget>[
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                      onSaved: (value) => _name = value,
+                      decoration: InputDecoration(labelText: "Full Name")),
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                      onSaved: (value) => _email = value,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(labelText: "Email")),
+                  TextFormField(
+                      onSaved: (value) => _password = value,
+                      obscureText: true,
+                      decoration: InputDecoration(labelText: "Password")),
+                  SizedBox(height: 20.0),
+                   new FlatButton(
+                    child: new Text('Have and account? Click here to sign in.'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => prefix0.LoginPage())
+                      );
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text("Create Account"),
+                    onPressed: () async {
+                      // MaterialPageRoute(builder: (context) => TodoApp());
+                      // save the fields..
+                      final form = _formKey.currentState;
+                      form.save();
 
-  Widget _buildBar(BuildContext context) {
-    return new AppBar(
-      backgroundColor: Colors.blue[300],
-      title: new Text("Create an Account"),
-      centerTitle: true,
-    );
+                      // Validate will return true if is valid, or false if invalid.
+                      if (form.validate()) {
+                        try {
+                          FirebaseUser result =
+                              await Provider.of<AuthService>(context).loginUser(
+                                  email: _email, password: _password); 
+                          print(result);
+                        } on AuthException catch (error) {
+                          return _buildErrorDialog(context, error.message);
+                        } on Exception catch (error) {
+                          return _buildErrorDialog(context, error.toString());
+                        }
+                      }
+                    },
+                  )
+                
+                ]))));
   }
-
-  Widget _buildTextFields() {
-    return new Container(
-      child: new Column(
-        children: <Widget>[
-          new Container(
-            child: new TextFormField(
-              controller: _nameFilter,
-              decoration: new InputDecoration(
-                labelText: 'Full Name'
-              ),
-            ),
-          ),
-          new Container(
-            child: new TextFormField(
-              controller: _emailFilter,
-              decoration: new InputDecoration(
-                labelText: 'Email'
-              ),
-            ),
-          ),
-          new Container(
-            child: new TextFormField(
-              controller: _usernameFilter,
-              decoration: new InputDecoration(
-                labelText: 'Username'
-              ),
-            ),
-          ),
-          new Container(
-            child: new TextFormField(
-              controller: _passwordFilter,
-              decoration: new InputDecoration(
-                labelText: 'Password'
-              ),
-              obscureText: true,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-   _buildButtons() {
-    if (_form == FormType.login) {
-      return new Container(
-        child: new Column(
-          children: <Widget>[
-            new RaisedButton(
-              child: new Text('Create Account'),
-              onPressed:  () {
-                _createAccountPressed();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TodoApp())
-                );
-              }
-            ),
-            new FlatButton(
-              child: new Text('Have an account? Click here to login.'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => prefix0.MyApp())
-                );
-              },
-            ),
-            new FlatButton(
-              child: new Text('Forgot Password?'),
-              onPressed: _passwordReset,
-            )
+  Future _buildErrorDialog(BuildContext context, _message) {
+    return showDialog(
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Error Message'),
+          content: Text(_message),
+          actions: <Widget>[
+            FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                })
           ],
-        ),
-      );
-    }
-  }
-
-  // These functions can self contain any user auth logic required, they all have access to _email and _password
-
-  void _createAccountPressed () {
-    print('The user wants to create an account with name $_name, email $_email, username $_username and password $_password');
-
-  }
-  void _passwordReset () {
-    print("The user wants a password reset request sent to $_email");
+        );
+      },
+      context: context,
+    );
   }
 }

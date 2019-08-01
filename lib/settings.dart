@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
-
+import 'auth.dart';
+import 'package:provider/provider.dart';
 class SettingsPage extends StatelessWidget {
 
  @override
@@ -17,20 +18,15 @@ class SettingsPage extends StatelessWidget {
      body: Center(
        child: Column(
          children: <Widget>[
-           new MaterialButton(
-             minWidth: 200,
-             color: Colors.white,
-             child: Text(
-               'Logout',
-               style: TextStyle(fontSize: 15),
-             ),
-               onPressed: () {
-                 Navigator.push(
-                   context,
-                   MaterialPageRoute(builder: (context) => MyApp())
-                 );
-               },
-           ),
+           SizedBox(height: 20.0),
+            RaisedButton(
+              color: Colors.white,
+              child: Text("Logout"),
+              onPressed: () async {
+                await Provider.of<AuthService>(context).logout();
+
+                  //Navigator.pushReplacementNamed(context, "/");
+              })
          ],
        ),
      ),

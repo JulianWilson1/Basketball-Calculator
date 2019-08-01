@@ -1,16 +1,21 @@
 // Import MaterialApp and other widgets which we can use to quickly create a material app
 import 'package:basketball_calculator/calculator.dart' as prefix0;
-import 'package:basketball_calculator/search.dart';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
 import 'settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 // Code written in Dart starts exectuting from the main function. runApp is part of
 // Flutter, and requires the component which will be our app's container. In Flutter,
 // every component is known as a "widget".
-void main() => runApp(new TodoApp());
+// void main() => runApp(new TodoApp();
 // Every component in Flutter is a widget, even the whole app itself
+
+final databaseReference = FirebaseDatabase.instance.reference();
 class TodoApp extends StatelessWidget {
+  TodoApp(FirebaseUser data);
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -129,16 +134,6 @@ class TodoListState extends State<TodoList> {
         backgroundColor: Colors.blue[300],
         title: new Text('Your Numbers'),
         actions: <Widget> [
-          new RaisedButton(
-            child: Text('Search Page'),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SearchApp())
-              );
-            },
-          ),
            new IconButton(
              icon: new Icon(Icons.settings),
              tooltip: 'Settings',
@@ -190,16 +185,20 @@ class TodoListState extends State<TodoList> {
                   child: Column(
                     children: [
                     //   The first text field is focused on as soon as the app starts.
-                      TextField(
-                        autofocus: true,
-                        onSubmitted: (val) {
-                          _addTodoItem(val);
-                          _pushAddTodoScreen2(); // Close the add todo screen
-                        },
-                        decoration: new InputDecoration(
-                          hintText: 'Enter practice or game...' 
+                      // void _addTodoItem() {
+                      //   databaseReference.child("1").set({
+                          TextField(
+                          autofocus: true,
+                          onSubmitted: (val) {
+                            _addTodoItem(val);
+                            _pushAddTodoScreen2(); // Close the add todo screen
+                          },
+                          decoration: new InputDecoration(
+                            hintText: 'Enter practice or game...' 
+                          ),
                         ),
-                      ),
+                      //   });
+                      // }  
                     ],
                   ),
                 ),
